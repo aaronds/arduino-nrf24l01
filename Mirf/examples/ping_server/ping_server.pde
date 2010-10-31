@@ -14,7 +14,7 @@
  */
 
 #include <Spi.h>
-#include <mirf.h>
+#include <Mirf.h>
 #include <nRF24L01.h>
 
 void setup(){
@@ -23,6 +23,10 @@ void setup(){
   /*
    * Setup pins / SPI.
    */
+   
+  Mirf.csnPin = 8;
+  Mirf.cePin = 7;
+
    
   Mirf.init();
   

@@ -14,10 +14,13 @@
  * Configurable:
  * CE -> 8
  * CSN -> 7
+ *
+ * This depends on the Spi Library:
+ * http://www.arduino.cc/playground/Code/Spi
  */
 
 #include <Spi.h>
-#include <mirf.h>
+#include <Mirf.h>
 #include <nRF24L01.h>
 #include <avr/sleep.h>
 
@@ -38,6 +41,9 @@ void setup(){
    */
    
   Mirf.init();
+  
+  //Mirf.csnPin = 8;
+  //Mirf.cePin = 7;
   
   /*
    * Configure reciving address.

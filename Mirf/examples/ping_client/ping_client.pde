@@ -10,10 +10,13 @@
  * Configurable:
  * CE -> 8
  * CSN -> 7
+ *
+ * This depends on the Spi Library:
+ * http://www.arduino.cc/playground/Code/Spi
  */
 
 #include <Spi.h>
-#include <mirf.h>
+#include <Mirf.h>
 #include <nRF24L01.h>
 
 void setup(){
