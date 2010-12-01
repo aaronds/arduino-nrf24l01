@@ -1,12 +1,25 @@
 /**
  * Mirf
  *
+ * Additional bug fixes and improvements
+ *  07/13/2010:
+ *   Added example to read a register
+ *  11/12/2009:
+ *   Fix dataReady() to work correctly
+ *   Renamed keywords to keywords.txt ( for IDE ) and updated keyword list
+ *   Fixed client example code to timeout after one second and try again
+ *    when no response received from server
+ * By: Nathan Isburgh <nathan@mrroot.net>
+ * $Id: mirf.cpp 67 2010-07-13 13:25:53Z nisburgh $
+ *
+ *
  * An Ardunio port of:
  * http://www.tinkerer.eu/AVRLib/nRF24L01
  *
  * Significant changes to remove depencence on interupts and auto ack support.
  *
  * Aaron Shrimpton <aaronds@gmail.com>
+ *
  */
 
 /*
@@ -32,7 +45,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
     DEALINGS IN THE SOFTWARE.
 
-    $Id$
+    $Id: mirf.cpp 67 2010-07-13 13:25:53Z nisburgh $
 */
 
 #include "Mirf.h"
@@ -62,12 +75,6 @@ void Nrf24l::transmitSync(uint8_t *dataout,uint8_t len){
 	}
 }
 
-void Nrf24l::transmitSyncByte(uint8_t byte,uint8_t len){
-	uint8_t i;
-	for(i = 0;i < len;i++){
-		spi->transfer(byte);
-	}
-}
 
 void Nrf24l::init() 
 // Initializes pins to communicate with the MiRF module
@@ -86,7 +93,7 @@ void Nrf24l::init()
      * Set double clock rate.
      */
 
-    //SPSR = (1 << SPI2X);
+    SPSR = (1 << SPI2X);
 }
 
 
@@ -129,9 +136,13 @@ void Nrf24l::setTADDR(uint8_t * adr)
 extern bool Nrf24l::dataReady() 
 // Checks if data is available for reading
 {
+    // See note in getData() function - just checking RX_DR isn't good enough
 	uint8_t status = getStatus();
-	return (status & (1 << RX_DR));
-		
+
+    // We can short circuit on RX_DR, but if it's not set, we still need
+    // to check the FIFO for any pending packets
+    if ( status & (1 << RX_DR) ) return 1;
+    return !rxFifoEmpty();
 }
 
 extern bool Nrf24l::rxFifoEmpty(){
@@ -150,6 +161,14 @@ extern void Nrf24l::getData(uint8_t * data)
     spi->transfer( R_RX_PAYLOAD );            // Send cmd to read rx payload
     transferSync(data,data,payload); // Read payload
     csnHi();                               // Pull up chip select
+    // NVI: per product spec, p 67, note c:
+    //  "The RX_DR IRQ is asserted by a new packet arrival event. The procedure
+    //  for handling this interrupt should be: 1) read payload through SPI,
+    //  2) clear RX_DR IRQ, 3) read FIFO_STATUS to check if there are more 
+    //  payloads available in RX FIFO, 4) if there are more data in RX FIFO,
+    //  repeat from step 1)."
+    // So if we're going to clear RX_DR here, we need to check the RX FIFO
+    // in the dataReady() function
     configRegister(STATUS,(1<<RX_DR));   // Reset status register
 }
 
@@ -169,13 +188,6 @@ void Nrf24l::readRegister(uint8_t reg, uint8_t * value, uint8_t len)
     spi->transfer(R_REGISTER | (REGISTER_MASK & reg));
     transferSync(value,value,len);
     csnHi();
-}
-
-void Nrf24l::writeRegisterByte(uint8_t reg,uint8_t b,uint8_t len){
-	csnLow();
-    	spi->transfer(W_REGISTER | (REGISTER_MASK & reg));
-	transmitSyncByte(b,len);
-	csnHi();
 }
 
 void Nrf24l::writeRegister(uint8_t reg, uint8_t * value, uint8_t len) 
@@ -256,18 +268,7 @@ uint8_t Nrf24l::getStatus(){
 void Nrf24l::powerUpRx(){
 	PTX = 0;
 	ceLow();
-	
-	/*
-	 * Change config register to RX.
-	 */
-
 	configRegister(CONFIG, mirf_CONFIG | ( (1<<PWR_UP) | (1<<PRIM_RX) ) );
-	
-	/*
-	 * Reset RX channel 0.
-	 */
-
-	writeRegisterByte(RX_ADDR_P0,'\0',mirf_ADDR_LEN);	
 	ceHi();
 	configRegister(STATUS,(1 << TX_DS) | (1 << MAX_RT)); 
 }

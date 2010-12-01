@@ -14,9 +14,6 @@
  * Configurable:
  * CE -> 8
  * CSN -> 7
- *
- * This depends on the Spi Library:
- * http://www.arduino.cc/playground/Code/Spi
  */
 
 #include <Spi.h>
@@ -41,9 +38,6 @@ void setup(){
    */
    
   Mirf.init();
-  
-  //Mirf.csnPin = 8;
-  //Mirf.cePin = 7;
   
   /*
    * Configure reciving address.
@@ -86,45 +80,25 @@ void loop(){
   /*
    * If a packet has been recived.
    */
-  if(Mirf.dataReady()){
-    
-    
-    do{
-    
-      /*
-       * Get load the packet into the buffer.
-       */
+  if(!Mirf.isSending() && Mirf.dataReady()){
+   
+    /*
+     * Get load the packet into the buffer.
+     */
      
-      Mirf.getData(data);
+    Mirf.getData(data);
     
-      /*
-       * Set the send address.
-       */
+    /*
+     * Set the send address.
+     */
      
-      Mirf.setTADDR((byte *)"clie1");
+    Mirf.setTADDR((byte *)"clie1");
     
-      /*
-       * Send the data back to the client.
-       */
+    /*
+     * Send the data back to the client.
+     */
      
-      Mirf.send(data);
-    
-      /*
-       * Wait untill sending has finished
-       *
-       * NB: isSending returns the chip to receving after returning true.
-       */
-     
-      while(Mirf.isSending()){
-        delay(100);
-      }
-      
-      /*
-       * Are there any more packets in the RX Fifo.
-       */
-       
-    }while(!Mirf.rxFifoEmpty());
-    
+    Mirf.send(data);
   }else{
     /* No data - night night. */
     toSleep();

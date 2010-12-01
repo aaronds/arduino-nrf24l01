@@ -11,8 +11,9 @@
  * CE -> 8
  * CSN -> 7
  *
- * This depends on the Spi Library:
- * http://www.arduino.cc/playground/Code/Spi
+ * Note: To see best case latency comment out all Serial.println
+ * statements not displaying the result and load 
+ * 'ping_server_interupt' on the server.
  */
 
 #include <Spi.h>
@@ -30,7 +31,10 @@ void setup(){
    * Mirf.csnPin = 9;
    * Mirf.cePin = 7;
    */
-   
+  /*
+  Mirf.cePin = 7;
+  Mirf.csnPin = 8;
+  */
   Mirf.init();
   
   /*
@@ -78,6 +82,10 @@ void loop(){
   delay(10);
   while(!Mirf.dataReady()){
     //Serial.println("Waiting");
+    if ( ( millis() - time ) > 1000 ) {
+      Serial.println("Timeout on response from server!");
+      return;
+    }
   }
   
   Mirf.getData((byte *) &time);

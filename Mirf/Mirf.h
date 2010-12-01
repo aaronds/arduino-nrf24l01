@@ -53,12 +53,10 @@ class Nrf24l {
 		uint8_t getStatus();
 		
 		void transmitSync(uint8_t *dataout,uint8_t len);
-		void transmitSyncByte(uint8_t b,uint8_t len);
 		void transferSync(uint8_t *dataout,uint8_t *datain,uint8_t len);
 		void configRegister(uint8_t reg, uint8_t value);
 		void readRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		void writeRegister(uint8_t reg, uint8_t * value, uint8_t len);
-		void writeRegisterByte(uint8_t reg,uint8_t b,uint8_t len);
 		void powerUpRx();
 		void powerUpTx();
 		void powerDown();

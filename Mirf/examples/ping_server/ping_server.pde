@@ -24,10 +24,6 @@ void setup(){
    * Setup pins / SPI.
    */
    
-  Mirf.csnPin = 8;
-  Mirf.cePin = 7;
-
-   
   Mirf.init();
   
   /*
@@ -63,42 +59,39 @@ void loop(){
   
   /*
    * If a packet has been recived.
+   *
+   * isSending also restores listening mode when it 
+   * transitions from true to false.
    */
-  if(Mirf.dataReady()){
+   
+  if(!Mirf.isSending() && Mirf.dataReady()){
+    Serial.println("Got packet");
     
-    do{
-      Serial.println("Got packet");
+    /*
+     * Get load the packet into the buffer.
+     */
+     
+    Mirf.getData(data);
     
-      /*
-       * Get load the packet into the buffer.
-       */
+    /*
+     * Set the send address.
+     */
      
-      Mirf.getData(data);
+     
+    Mirf.setTADDR((byte *)"clie1");
     
-      /*
-       * Set the send address.
-       */
+    /*
+     * Send the data back to the client.
+     */
      
-     
-      Mirf.setTADDR((byte *)"clie1");
+    Mirf.send(data);
     
-      /*
-       * Send the data back to the client.
-       */
-     
-      Mirf.send(data);
-    
-      /*
-       * Wait untill sending has finished
-       *
-       * NB: isSending returns the chip to receving after returning true.
-       */
-     
-      while(Mirf.isSending()){
-        delay(100);
-      }
+    /*
+     * Wait untill sending has finished
+     *
+     * NB: isSending returns the chip to receving after returning true.
+     */
       
-      Serial.println("Reply sent.");
-    }while(!Mirf.rxFifoEmpty());
+    Serial.println("Reply sent.");
   }
 }
