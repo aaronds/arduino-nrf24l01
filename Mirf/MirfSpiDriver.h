@@ -8,10 +8,10 @@ extern "C" {
 
 class MirfSpiDriver {
 	public:
-		uint8_t transfer(uint8_t data);
+		virtual uint8_t transfer(uint8_t data);
 
-		void begin();
-		void end();
+		virtual void begin();
+		virtual void end();
 };
 
 #endif

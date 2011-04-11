@@ -10,15 +10,17 @@
  * CSN -> 7
  */
 
-#include <Spi.h>
-#include <mirf.h>
+#include <SPI.h>
+#include <Mirf.h>
 #include <nRF24L01.h>
+#include <MirfHardwareSpiDriver.h>
 
 void setup() {
   Serial.begin(9600);
   Serial.println( "Starting wireless..." );
 
   // Setup
+  Mirf.spi = &MirfHardwareSpi;
   Mirf.init();
   Mirf.setRADDR((byte *)"clie1");
   Mirf.payload = sizeof(unsigned long);

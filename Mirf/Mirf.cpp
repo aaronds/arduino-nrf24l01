@@ -2,6 +2,8 @@
  * Mirf
  *
  * Additional bug fixes and improvements
+ *  11/03/2011:
+ *   Switched spi library.
  *  07/13/2010:
  *   Added example to read a register
  *  11/12/2009:
@@ -87,6 +89,7 @@ void Nrf24l::init()
     csnHi();
 
     // Initialize spi module
+	Serial.println("Calling begin");
     spi->begin();
 
 }

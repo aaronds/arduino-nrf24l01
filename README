@@ -2,10 +2,6 @@ An Arduino port of the tinkerer.eu library. It works with the Sparkfun nRF24L01+
 
 http://www.arduino.cc/playground/InterfacingWithHardware/Nrf24L01
 
-Currently depends on:
-
-http://www.arduino.cc/playground/Code/Spi
-
 Zip file to be extracted in the Arduino libraries folder:
 
 http://github.com/aaronds/arduino-nrf24l01/downloads

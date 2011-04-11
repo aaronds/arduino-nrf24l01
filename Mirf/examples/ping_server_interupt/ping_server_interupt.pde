@@ -16,9 +16,10 @@
  * CSN -> 7
  */
 
-#include <Spi.h>
+#include <SPI.h>
 #include <Mirf.h>
 #include <nRF24L01.h>
+#include <MirfHardwareSpiDriver.h>
 #include <avr/sleep.h>
 
 void wakeupFunction(){
@@ -32,6 +33,12 @@ void toSleep(){
 
 void setup(){
   Serial.begin(9600);
+
+  /*
+   * Set the SPI Driver.
+   */
+
+  Mirf.spi = &MirfHardwareSpi;
   
   /*
    * Setup pins / SPI.

@@ -13,12 +13,19 @@
  *
  */
 
-#include <Spi.h>
+#include <SPI.h>
 #include <Mirf.h>
 #include <nRF24L01.h>
+#include <MirfHardwareSpiDriver.h>
 
 void setup(){
   Serial.begin(9600);
+  
+  /*
+   * Set the SPI Driver.
+   */
+
+  Mirf.spi = &MirfHardwareSpi;
   
   /*
    * Setup pins / SPI.

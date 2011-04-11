@@ -16,9 +16,10 @@
  * 'ping_server_interupt' on the server.
  */
 
-#include <Spi.h>
+#include <SPI.h>
 #include <Mirf.h>
 #include <nRF24L01.h>
+#include <MirfHardwareSpiDriver.h>
 
 void setup(){
   Serial.begin(9600);
@@ -35,6 +36,7 @@ void setup(){
   Mirf.cePin = 7;
   Mirf.csnPin = 8;
   */
+  Mirf.spi = &MirfHardwareSpi;
   Mirf.init();
   
   /*
