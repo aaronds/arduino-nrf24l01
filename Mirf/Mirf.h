@@ -28,9 +28,10 @@
 #define _MIRF_H_
 
 #include <WProgram.h>
-#include <Spi.h>
 
 #include "nRF24L01.h"
+#include "MirfSpiDriver.h"
+
 // Nrf24l settings
 
 #define mirf_ADDR_LEN	5
@@ -101,7 +102,7 @@ class Nrf24l {
 		 * Spi interface (must extend spi).
 		 */
 
-		SPI *spi;
+		MirfSpiDriver *spi;
 };
 
 extern Nrf24l Mirf;

@@ -58,7 +58,7 @@ Nrf24l::Nrf24l(){
 	csnPin = 7;
 	channel = 1;
 	payload = 16;
-	spi = &Spi;
+	spi = NULL;
 }
 
 void Nrf24l::transferSync(uint8_t *dataout,uint8_t *datain,uint8_t len){
@@ -87,13 +87,8 @@ void Nrf24l::init()
     csnHi();
 
     // Initialize spi module
-    spi->mode((1 << SPR0));
+    spi->begin();
 
-    /*
-     * Set double clock rate.
-     */
-
-    SPSR = (1 << SPI2X);
 }
 
 
