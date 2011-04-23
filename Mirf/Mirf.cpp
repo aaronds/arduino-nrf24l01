@@ -89,7 +89,6 @@ void Nrf24l::init()
     csnHi();
 
     // Initialize spi module
-	Serial.println("Calling begin");
     spi->begin();
 
 }
