@@ -27,7 +27,7 @@
 #ifndef _MIRF_H_
 #define _MIRF_H_
 
-#include <WProgram.h>
+#include <Arduino.h>
 
 #include "nRF24L01.h"
 #include "MirfSpiDriver.h"
